@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Form, File, UploadFile, Query, Depends
 from services.document_service import DocumentService
+from services.user_service import UserService
 from docs_processing.pageable import Pageable, PaginatedResponse
 from auth.dependencies import require_admin_role, require_client_role
 
@@ -125,3 +126,33 @@ async def delete_my_doc(doc_id: str, current_user=Depends(require_client_role)):
     login = current_user.login
     if not DocumentService.delete_my_doc(doc_id=doc_id, login=login):
         raise HTTPException(status_code=404, detail="Файл для удаления не найден")
+
+
+@page_router.post("/profile")  # изменение имени пользователя
+async def change_profile(first_name: str, last_name: str, current_user=Depends(require_client_role)):
+    login = current_user.login
+    if not UserService.change_profile(first_name, last_name, login):
+        raise HTTPException(status_code=304, detail="Не получается изменить данные")
+
+
+@page_router.get("/profiles")  # получением данных пользователей
+async def get_profiles(
+        page: int = Query(0, ge=0, description="Номер страницы (начинается с 0)"),
+        size: int = Query(10, ge=1, le=100, description="Размер страницы (1-100)")):
+    accounts = DocumentService.get_profiles(page=page, size=size)
+    total = len(accounts)
+
+    return PaginatedResponse(
+        items=accounts,
+        total=total,
+        pageable=Pageable(page=page, size=size),
+        total_pages=(total + size - 1) // size
+    )
+
+
+@page_router.get("/profile")  # получение пользователя по логину
+async def get_user_profile(login):
+    account = UserService.get_user_profile(login)
+    if account:
+        return account
+    raise HTTPException(status_code=404, detail="Не найден аккаунт")

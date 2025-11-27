@@ -132,6 +132,8 @@ class DataManager(DataConnection):
             CREATE TABLE IF NOT EXISTS accounts (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             login VARCHAR(255) UNIQUE NOT NULL,
+            first_name VARCHAR(100),
+            last_name VARCHAR(100),
             password_hash VARCHAR(255) NOT NULL,
             role VARCHAR(20) NOT NULL CHECK (role IN ('client', 'admin')),
             created_at TIMESTAMP DEFAULT NOW()
@@ -150,6 +152,9 @@ class DataManager(DataConnection):
             ADD CONSTRAINT chk_documents_age CHECK (
                 age_category IN ('Взрослые', 'Дети', 'Взрослые, дети')
             );
+            
+            ALTER TABLE accounts
+            ADD CONSTRAINT chk_accounts_login CHECK ("login" ~* '[a-zA-Z0-9-_]{3,20}');
         """
 
         self._execute_query(create_query)
@@ -277,4 +282,30 @@ class DataManager(DataConnection):
                     return ans
         except psycopg2.Error as e:
             logger.error(f"Ошибка в получении данных: {e}")
+            return []
+
+    def get_profiles(self, page: int = 0, size: int = 10):
+        query = """
+            SELECT a.login, a.first_name, a.last_name, a.role, a.created_at,
+                COALESCE(
+                    (SELECT COUNT(*) 
+                     FROM documents d 
+                     WHERE d.creator = a.login 
+                        OR (a.role = 'admin' AND d.creator = 'Минздрав')
+                    ), 0
+                ) as documents_count
+            FROM accounts a
+            ORDER BY a.created_at
+            LIMIT %s OFFSET %s;
+        """
+
+        try:
+            with self._get_connection() as conn:
+                conn.autocommit = True
+                with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                    cur.execute(query, (size, page * size))
+                    ans = cur.fetchall()
+                    return [dict(row) for row in ans]
+        except Exception as e:
+            logger.error(f"Ошибка получения аккаунтов с пагинацией: {e}")
             return []
