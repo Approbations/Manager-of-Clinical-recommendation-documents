@@ -5,7 +5,7 @@ import requests
 import threading
 import pyexcel as pe
 from concurrent.futures import ThreadPoolExecutor
-from db.postgres import DataManager
+from medical_support_project.db.postgres import DataManager
 
 db_lock = threading.Lock()
 
@@ -51,13 +51,12 @@ def minzdrav_excel():
     except Exception as e:
         print(f"Ошибка: {e}")
         return []
-    clinical_recommendations(lst2)
+    clinical_recommendations(lst2[:5])
 
 
 def clinical_recommendations(data: list):
     data_base = DataManager()
-    if not data_base.creation_db():
-        data_base.create_table()
+    if data_base.database_exists():
 
         with ThreadPoolExecutor(max_workers=15) as pool:
             futures = [pool.submit(download, line, data_base) for line in data]
@@ -69,33 +68,63 @@ def clinical_recommendations(data: list):
                     completed += 1
                 except Exception as e:
                     print(f"Ошибка в потоке: {e}")
+                print(completed)
         print(f"Загрузка данных в БД ({len(data_base.upload_list)} записей)")
         data_base.upload_data()
-    # check_relevance()
+    else:
+        print("Вы не создали базу данных")
 
 
 def download(line: list, data_base: DataManager):
-    doc_id, title, MCB, age_category, developer, _, placement_data, _ = line
+    print(f"Получена строка: {line}")
+    print(f"Длина строки: {len(line)}")
+
     try:
+        # Извлекаем данные из line
+        doc_id = line[0]
+        title = line[1]
+        MCB = line[2]
+        age_category = line[3]
+        developer = line[4]
+
+        # placement_data - это 6-й элемент в исходном Excel (индекс 5)
+        placement_data = line[6]  # Это datetime объект из вашего вывода
+
+        # Преобразуем datetime в date
+        if isinstance(placement_data, datetime.datetime):
+            placement_date = placement_data.date()
+        else:
+            placement_date = datetime.date.today()
+
+        print(f"Данные: doc_id={doc_id}, placement_date={placement_date}")
+
+        # Скачиваем PDF
         url = f"https://apicr.minzdrav.gov.ru/api.ashx?op=GetClinrecPdf&id={doc_id[:-2]}"
+        print(f"Загружаем: {url}")
         response = requests.get(url)
 
         if response.status_code == 200:
             file_content = response.content
+            print(f"Загружено {len(file_content)} байт для {doc_id}")
+
             with db_lock:
-                data_base.add_to_upload_list(doc_id, title, MCB, age_category, developer, placement_data, file_content)
+                data_base.add_to_upload_list(
+                    id_cr=doc_id,
+                    title=title,
+                    MCB=MCB,
+                    age_category=age_category,
+                    developer=developer,
+                    placement_date=placement_date,  # Дата
+                    data=file_content,  # Байты PDF
+                    creator="Минздрав"  # Создатель
+                )
+            print(f"Успешно добавлен в список: {doc_id}")
         else:
-            print(doc_id)
+            print(f"Ошибка загрузки {doc_id}: статус {response.status_code}")
 
     except Exception as e:
-        print(e)
+        print(f"Ошибка в download: {e}")
+        import traceback
+        traceback.print_exc()
 
-
-# def check_relevance():
-#     # не найдено по каким параметрам именно эти файлы отсутствуют в актуальных данных на момент 28.10.25
-#     to_delete = ('1101212_1', '140_1', '142_1', '163_2', '171_2', '190_2', '258_2', '324_2', '326_4', '328_2', '45_1',
-#                  '504_2', '546_3', '578_1', '589_2', '591_1', '634_1', '646_1', '649_1', '658_1', '659_1', '666_1',
-#                  '667_1', '689_1', '690_2', '692_1', '693_1', '701_1', '705_1', '706_1', '707_1', '717_2', '727_1',
-#                  '73_9')
-#     data_base = DataManager()
-#     data_base.delete_data(to_delete)
+minzdrav_excel()
