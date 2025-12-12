@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class DataConnection:
     def __init__(self):
-        self.dbname = os.getenv("DB_NAME", "clinical_recommendations")
+        self.dbname = os.getenv("DB_NAME", "test")
         self.user = os.getenv("DB_USER", "postgres")
         self.password = os.getenv("DB_PASSWORD", "qwerty")
         self.host = os.getenv("DB_HOST", "localhost")
@@ -41,7 +41,6 @@ class DataConnection:
             logger.error(f"Ошибка в базе данных: {e}")
             raise
 
-    # получение всех данных из какой-либо таблицы
     def get_all_data(self, table: str):
         query = f"""SELECT * FROM {table};"""
 
@@ -306,6 +305,19 @@ class DataManager(DataConnection):
                     cur.execute(query, (size, page * size))
                     ans = cur.fetchall()
                     return [dict(row) for row in ans]
+        except Exception as e:
+            logger.error(f"Ошибка получения аккаунтов с пагинацией: {e}")
+            return []
+
+    def database_exists(self):
+        query = "SELECT 1 FROM pg_catalog.pg_database WHERE datname = %s"
+        try:
+            with self._get_connection() as conn:
+                conn.autocommit = True
+                with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                    cur.execute(query, (self.dbname,))
+                    ans = cur.fetchall() is not None
+                    return ans
         except Exception as e:
             logger.error(f"Ошибка получения аккаунтов с пагинацией: {e}")
             return []
