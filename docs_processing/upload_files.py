@@ -5,7 +5,7 @@ import requests
 import threading
 import pyexcel as pe
 from concurrent.futures import ThreadPoolExecutor
-from medical_support_project.db.postgres import DataManager
+from .db.postgres import DataManager
 
 db_lock = threading.Lock()
 
@@ -51,7 +51,7 @@ def minzdrav_excel():
     except Exception as e:
         print(f"Ошибка: {e}")
         return []
-    clinical_recommendations(lst2[:5])
+    clinical_recommendations(lst2)
 
 
 def clinical_recommendations(data: list):
@@ -87,10 +87,8 @@ def download(line: list, data_base: DataManager):
         age_category = line[3]
         developer = line[4]
 
-        # placement_data - это 6-й элемент в исходном Excel (индекс 5)
-        placement_data = line[6]  # Это datetime объект из вашего вывода
+        placement_data = line[6]
 
-        # Преобразуем datetime в date
         if isinstance(placement_data, datetime.datetime):
             placement_date = placement_data.date()
         else:
@@ -114,9 +112,9 @@ def download(line: list, data_base: DataManager):
                     MCB=MCB,
                     age_category=age_category,
                     developer=developer,
-                    placement_date=placement_date,  # Дата
-                    data=file_content,  # Байты PDF
-                    creator="Минздрав"  # Создатель
+                    placement_date=placement_date,
+                    data=file_content,
+                    creator="Минздрав"
                 )
             print(f"Успешно добавлен в список: {doc_id}")
         else:
@@ -127,4 +125,6 @@ def download(line: list, data_base: DataManager):
         import traceback
         traceback.print_exc()
 
-minzdrav_excel()
+
+# раскоментируйте для скачивания
+# minzdrav_excel()
