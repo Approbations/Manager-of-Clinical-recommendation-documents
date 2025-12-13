@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class DataConnection:
     def __init__(self):
-        self.dbname = os.getenv("DB_NAME", "test")
+        self.dbname = os.getenv("DB_NAME", "clinical_recommendations")
         self.user = os.getenv("DB_USER", "postgres")
         self.password = os.getenv("DB_PASSWORD", "qwerty")
         self.host = os.getenv("DB_HOST", "localhost")

@@ -1,15 +1,9 @@
 import datetime
-import time
-
 import requests
 import threading
 import pyexcel as pe
 from concurrent.futures import ThreadPoolExecutor
-<<<<<<< HEAD
 from .db.postgres import DataManager
-=======
-from medical_support_project.db.postgres import DataManager
->>>>>>> adf2e8cada3016adaf48b28e124573f427847bb9
 
 db_lock = threading.Lock()
 
@@ -55,7 +49,7 @@ def minzdrav_excel():
     except Exception as e:
         print(f"Ошибка: {e}")
         return []
-    clinical_recommendations(lst2[:5])
+    clinical_recommendations(lst2)
 
 
 def clinical_recommendations(data: list):
@@ -91,15 +85,8 @@ def download(line: list, data_base: DataManager):
         age_category = line[3]
         developer = line[4]
 
-<<<<<<< HEAD
         placement_data = line[6]
 
-=======
-        # placement_data - это 6-й элемент в исходном Excel (индекс 5)
-        placement_data = line[6]  # Это datetime объект из вашего вывода
-
-        # Преобразуем datetime в date
->>>>>>> adf2e8cada3016adaf48b28e124573f427847bb9
         if isinstance(placement_data, datetime.datetime):
             placement_date = placement_data.date()
         else:
@@ -123,15 +110,9 @@ def download(line: list, data_base: DataManager):
                     MCB=MCB,
                     age_category=age_category,
                     developer=developer,
-<<<<<<< HEAD
                     placement_date=placement_date,
                     data=file_content,
                     creator="Минздрав"
-=======
-                    placement_date=placement_date,  # Дата
-                    data=file_content,  # Байты PDF
-                    creator="Минздрав"  # Создатель
->>>>>>> adf2e8cada3016adaf48b28e124573f427847bb9
                 )
             print(f"Успешно добавлен в список: {doc_id}")
         else:
@@ -141,10 +122,7 @@ def download(line: list, data_base: DataManager):
         print(f"Ошибка в download: {e}")
         import traceback
         traceback.print_exc()
-<<<<<<< HEAD
 
 
 # раскоментируйте для скачивания
 # minzdrav_excel()
-=======
->>>>>>> adf2e8cada3016adaf48b28e124573f427847bb9
