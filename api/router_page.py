@@ -76,7 +76,7 @@ async def upload_doc(doc_id: str = Form(..., description="ID документа"
         raise HTTPException(status_code=500, detail=f"Ошибка в загрузке документе: {str(e)}")
 
 
-@page_router.post("/get_my_docs")  # олучение всех документов загруженных пользователем
+@page_router.get("/get_my_docs")  # олучение всех документов загруженных пользователем
 async def get_my_docs(
         page: int = Query(0, ge=0, description="Номер страницы (начинается с 0)"),
         size: int = Query(10, ge=1, le=100, description="Размер страницы (1-100)"),
