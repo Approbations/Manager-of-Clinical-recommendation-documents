@@ -1,6 +1,11 @@
 # Manager-of-Clinical-recommendation-documents
 
 ## Как развернуть локально
+
+Установите зависимости:
+
+   pip install -r requirements.txt
+
 Создаем базу данных "clinical_recommendations". 
 
 Запускаем *.sql из папки bd для создания таблиц. 
@@ -20,7 +25,13 @@
 
 Запускаем с помощью uvicorn
 
-    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    uvicorn main:app --host 0.0.0.0 --port 8002 --reload
 
 ## Запуск с помощью докера
-Ещё тестируется
+1. Убедитесь, что свободен 8002 порт.
+2. Поднимите контейнеры:
+
+        docker compose up --build
+
+   Приложение будет доступно на `http://localhost:8002`.
+3. При необходимости переопределите переменные окружения через `.env` файл.

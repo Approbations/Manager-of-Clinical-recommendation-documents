@@ -1,10 +1,28 @@
 import logging
 import os
+import sys
 import time
-
-from db.postgres import DataManager
+from pathlib import Path
+from postgres import DataManager
+from dotenv import set_key, find_dotenv
 
 logger = logging.getLogger(__name__)
+
+
+DOCS_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(DOCS_ROOT, 'docs_processing'))
+from upload_files import minzdrav_excel
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / ".env"
+
+
+if env_path.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except Exception as e:
+        print(str(e))
 
 
 def initialize_database():
@@ -16,16 +34,12 @@ def initialize_database():
         data_manager.initialization_db()
         print("База данных успешно инициализирована")
 
-        if os.getenv("LOAD_MINZDRAV_DATA", "false").lower() == "true":
-            from docs_processing.upload_files import sync_minzdrav_documents  # noqa: WPS433
-
-            limit_env = os.getenv("LOAD_MINZDRAV_LIMIT")
-            limit = int(limit_env) if limit_env else None
-            force_reload = os.getenv("LOAD_MINZDRAV_FORCE", "false").lower() == "true"
-            push_embeddings = os.getenv("LOAD_MINZDRAV_PUSH_EMBEDDINGS", "true").lower() == "true"
-
+        if os.getenv("LOAD_MINZDRAV_DATA").lower() == "false":
             print("Загрузка начальных данных Минздрава...")
-            sync_minzdrav_documents(limit=limit, force_reload=force_reload, push_embeddings=push_embeddings)
+            minzdrav_excel()
+            my_env = find_dotenv()
+            set_key(my_env, "LOAD_MINZDRAV_DATA", "true")
+            load_dotenv(my_env, override=True)
 
     except Exception as e:
         logger.exception("Ошибка при инициализации базы данных: %s", e)

@@ -1,21 +1,34 @@
 import datetime
 import psycopg2
 import logging
-import os, time
+import os
 from uuid import UUID
 from psycopg2.extras import execute_values, RealDictCursor
 from typing import Tuple, Any
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / ".env"
+
+
+if env_path.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except Exception as e:
+        print(str(e))
+
+
 class DataConnection:
     def __init__(self):
-        self.dbname = os.getenv("DB_NAME", "clinical_recommendations")
-        self.user = os.getenv("DB_USER", "postgres")
-        self.password = os.getenv("DB_PASSWORD", "qwerty")
-        self.host = os.getenv("DB_HOST", "localhost")
-        self.port = os.getenv("DB_PORT", "5432")
+        self.dbname = os.getenv("DB_NAME")
+        self.user = os.getenv("DB_USER")
+        self.password = os.getenv("DB_PASSWORD")
+        self.host = os.getenv("DB_HOST")
+        self.port = int(os.getenv("DB_PORT"))
         self.upload_list = []
 
     def _get_connection(self):

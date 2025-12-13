@@ -9,11 +9,15 @@ services:
       - DATABASE_URL=postgresql://postgres:qwerty@db:5432/clinical_recommendations
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=clinical_recommendations
+      - DB_NAME=test
       - DB_USER=postgres
       - DB_PASSWORD=qwerty
+      - MINZDRAV_URL=https://apicr.minzdrav.gov.ru/api.ashx
+      - ORIGIN=https://apicr.minzdrav.gov.ru
+      - REFERER=https://apicr.minzdrav.gov.ru/
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./logs:/var/log/app
 
@@ -27,7 +31,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d test" ]  # Проверяем БД test
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres_data:

@@ -10,11 +10,13 @@ CREATE TABLE IF NOT EXISTS documents (
 );
 
 CREATE TABLE IF NOT EXISTS accounts (
-	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-	login VARCHAR(255) UNIQUE NOT NULL,
-	password_hash VARCHAR(255) NOT NULL,
-	role VARCHAR(20) NOT NULL CHECK (role IN ('client', 'admin')),
-	created_at TIMESTAMP DEFAULT NOW()
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            login VARCHAR(255) UNIQUE NOT NULL,
+            first_name VARCHAR(100),
+            last_name VARCHAR(100),
+            password_hash VARCHAR(255) NOT NULL,
+            role VARCHAR(20) NOT NULL CHECK (role IN ('client', 'admin')),
+            created_at TIMESTAMP DEFAULT NOW()
 );
 
 DO $$

@@ -1,26 +1,50 @@
 import datetime
+import os, sys
+
 import requests
 import threading
 import pyexcel as pe
 from concurrent.futures import ThreadPoolExecutor
-from .db.postgres import DataManager
+
+import logging
+from pathlib import Path
+
+
+DOCS_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(DOCS_ROOT, 'db'))
+from postgres import DataManager
+
 
 db_lock = threading.Lock()
+
+logger = logging.getLogger(__name__)
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / ".env"
+
+
+if env_path.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except Exception as e:
+        print(str(e))
 
 
 def minzdrav_excel():
     '''с сайта скачивается документ, который имеет названия, которые не используются,
     поэтому подчищаем так чтобы было как можно меньше документов на выброс'''
 
-    url = "https://apicr.minzdrav.gov.ru/api.ashx"
+    url = os.getenv("MINZDRAV_URL")
     params = {'op': 'GetJsonClinrecsFilterV2Excel'}
     data = {'filter': {"status": [1], "search": "",    "year": "",    "specialties": []}}
 
     headers = {
         'User-Agent': 'Mozilla/5.0',
         'Content-Type': 'application/json;charset=UTF-8',
-        'Origin': 'https://apicr.minzdrav.gov.ru',
-        'Referer': 'https://apicr.minzdrav.gov.ru/',
+        'Origin': 'ORIGIN',
+        'Referer': 'REFERER',
     }
     try:
         response = requests.post(url, params=params, json=data, headers=headers)
@@ -49,7 +73,7 @@ def minzdrav_excel():
     except Exception as e:
         print(f"Ошибка: {e}")
         return []
-    clinical_recommendations(lst2)
+    clinical_recommendations(lst2[:5])
 
 
 def clinical_recommendations(data: list):
@@ -124,5 +148,5 @@ def download(line: list, data_base: DataManager):
         traceback.print_exc()
 
 
-# раскоментируйте для скачивания
+# раскоментируйте для локального скачивания
 # minzdrav_excel()
