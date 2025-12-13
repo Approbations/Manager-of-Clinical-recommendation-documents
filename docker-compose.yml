@@ -9,7 +9,7 @@ services:
       - DATABASE_URL=postgresql://postgres:qwerty@db:5432/clinical_recommendations
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=test
+      - DB_NAME=clinical_recommendations
       - DB_USER=postgres
       - DB_PASSWORD=qwerty
       - MINZDRAV_URL=https://apicr.minzdrav.gov.ru/api.ashx
@@ -33,7 +33,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d test" ]  # Проверяем БД test
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d clinical_recommendations" ]  # Проверяем БД test
       interval: 5s
       timeout: 5s
       retries: 10
