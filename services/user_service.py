@@ -11,14 +11,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 class UserService:
     @staticmethod
-    def registry(login: str, password: str, role: str = "client"):
+    def registry(login, password, role: str = "client"):
         user = user_base.registry(login, password, role)
         if not user:
             raise HTTPException(status_code=400, detail="Не удалось зарегестрировать пользователя")
         return user
 
     @staticmethod
-    def login(login: str, password: str):
+    def login(login, password):
         user = user_base.authenticate(login, password)
         if not user:
             raise HTTPException(status_code=401, detail="Неверный логин или пароль")
@@ -32,3 +32,11 @@ class UserService:
         }
         access_token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return {"access_token": access_token, "token_type": "bearer", "user": user}
+
+    @staticmethod
+    def change_profile(first_name, last_name, login):
+        return user_base.change_profile(first_name, last_name, login)
+
+    @staticmethod
+    def get_user_profile(login):
+        return user_base.get_user_profile(login)

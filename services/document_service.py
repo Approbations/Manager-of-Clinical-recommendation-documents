@@ -53,3 +53,7 @@ class DocumentService:
             data_base.delete_data((doc_id,))
             return True
         return False
+
+    @staticmethod
+    def get_profiles(page: int = 0, size: int = 10):
+        return data_base.get_profiles(page, size)

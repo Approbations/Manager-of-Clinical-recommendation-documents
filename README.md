@@ -13,15 +13,15 @@
 Запускаем функцию minzdav_excel из docs_processing/upload_files ()
 
 
-    with ThreadPoolExecutor(max_workers=15) as pool:
-        futures = [pool.submit(download, line, data_base) for line in data]
+        clinical_recommendations(lst2[:5])
 
 
-Уменьшаем количество загружаемых документов, например до 10 (т.к. всего загружается 600+ документов, и это занимает около получаса)
+
+Уменьшаем/увеличиваем количество загружаемых документов, например до 10 (т.к. всего загружается 600+ документов, и это занимает около получаса). По умолчанию стоит 5.
 
 
-    with ThreadPoolExecutor(max_workers=15) as pool:
-        futures = [pool.submit(download, line, data_base) for line in data[:10]]
+        clinical_recommendations(lst2[:100])
+
 
 Запускаем с помощью uvicorn
 

@@ -2,11 +2,14 @@ import psycopg2
 import logging
 from typing import Tuple, Any
 from uuid import UUID
+import sys, os
 import hashlib
 from psycopg2.extras import RealDictCursor
-from db.postgres import DataConnection
 
 logger = logging.getLogger(__name__)
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from db.postgres import DataConnection
 
 
 class UserConnection(DataConnection):

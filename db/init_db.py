@@ -4,7 +4,6 @@ import sys
 import time
 from pathlib import Path
 from postgres import DataManager
-from dotenv import set_key, find_dotenv
 
 logger = logging.getLogger(__name__)
 
@@ -34,12 +33,9 @@ def initialize_database():
         data_manager.initialization_db()
         print("База данных успешно инициализирована")
 
-        if os.getenv("LOAD_MINZDRAV_DATA").lower() == "false":
+        if len(data_manager.get_all_docs()) == 0:
             print("Загрузка начальных данных Минздрава...")
             minzdrav_excel()
-            my_env = find_dotenv()
-            set_key(my_env, "LOAD_MINZDRAV_DATA", "true")
-            load_dotenv(my_env, override=True)
 
     except Exception as e:
         logger.exception("Ошибка при инициализации базы данных: %s", e)
