@@ -6,6 +6,10 @@ export default {
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+    },
     token_type: {
       type: String,
       required: true,
@@ -14,6 +18,7 @@ export default {
       type: String,
       required: true,
     },
+    login: String,
   },
   data() {
     return {
@@ -30,7 +35,11 @@ export default {
       this.msg = "";
       this.iclass = this.tclass = "su-norm";
       if (fD.get("doc_id") && fD.get("title") && fD.get("file").size) {
-        const response = await fetch(this.du + "/createmydoc", {
+        const url =
+          this.role === "admin"
+            ? this.du + "/createdoc"
+            : this.du + "/createmydoc";
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             Authorization: this.token_type + " " + this.access_token,
@@ -74,6 +83,15 @@ export default {
     <input type="text" name="age_category" id="inp-acat" /><br />
     <label for="inp-dev">Разработчик</label><br />
     <input type="text" name="developer" id="inp-dev" /><br />
+
+    <label v-if="role === 'admin'" for="inp-cr">Кто загрузил</label><br />
+    <input
+      v-if="role === 'admin'"
+      type="text"
+      name="creator"
+      id="inp-cr"
+    /><br />
+
     <label for="inp-file">Документ <span style="color: red">*</span></label>
     <br />
     <input type="file" name="file" id="inp-file" accept=".pdf" /><br />

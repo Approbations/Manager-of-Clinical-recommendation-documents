@@ -19,6 +19,7 @@ export default {
   emits: ["auth"],
   methods: {
     async log_in() {
+      this.lclass = this.pclass = "su-norm";
       if (this.login && this.password) {
         const response = await fetch(this.du + "/login", {
           method: "POST",
@@ -30,7 +31,6 @@ export default {
             password: this.password,
           }),
         });
-        this.lclass = this.pclass = "su-norm";
         if (response.ok) {
           const data = await response.json();
           this.$emit(
@@ -60,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <label for="su-login">Логин <span style="color: red">*</span></label>
+  <label for="su-login">Логин<span style="color: red">*</span></label>
 
   <br />
   <input
@@ -70,7 +70,7 @@ export default {
     v-model="login"
     placeholder="Введите логин"
   /><br />
-  <label for="su-password">Пароль <span style="color: red">*</span></label>
+  <label for="su-password">Пароль<span style="color: red">*</span></label>
 
   <br />
   <input

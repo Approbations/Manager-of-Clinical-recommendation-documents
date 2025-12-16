@@ -54,7 +54,7 @@ export default {
 </script>
 
 <template>
-  <label for="su-login">Логин <span style="color: red">*</span></label>
+  <label for="su-login">Логин<span style="color: red">*</span></label>
   <br />
   <input
     type="text"
@@ -63,7 +63,7 @@ export default {
     v-model="login"
     placeholder="Введите логин"
   /><br />
-  <label for="su-password">Пароль <span style="color: red">*</span></label>
+  <label for="su-password">Пароль<span style="color: red">*</span></label>
   <br />
   <input
     type="password"

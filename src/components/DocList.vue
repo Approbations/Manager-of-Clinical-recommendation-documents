@@ -7,6 +7,7 @@ export default {
       type: String,
       required: true,
     },
+    role: String,
     token_type: {
       type: String,
       required: true,
