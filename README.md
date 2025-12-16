@@ -6,7 +6,11 @@
 
    pip install -r requirements.txt
 
-Создаем базу данных "clinical_recommendations". 
+Создайте папку ssh
+
+Запустите скрипт generate-certs.py 
+
+Создаем базу данных "clinical_recommendations"
 
 Запускаем *.sql из папки bd для создания таблиц. 
 
@@ -25,7 +29,7 @@
 
 Запускаем с помощью uvicorn
 
-    uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+    uvicorn main:app --host localhost --port 8002 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem
 
 ## Запуск с помощью докера
 1. Убедитесь, что свободен 8002 порт.
@@ -33,5 +37,5 @@
 
         docker compose up --build
 
-   Приложение будет доступно на `http://localhost:8002`.
+   Приложение будет доступно на `https://localhost:8002`.
 3. При необходимости переопределите переменные окружения через `.env` файл.
