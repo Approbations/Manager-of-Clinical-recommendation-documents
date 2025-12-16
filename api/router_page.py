@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Form, File, UploadFile, Query, Depends
+from fastapi import APIRouter, HTTPException, Form, File, UploadFile, Query, Depends, Body
 from services.document_service import DocumentService
 from services.user_service import UserService
 from docs_processing.pageable import Pageable, PaginatedResponse
@@ -129,7 +129,7 @@ async def delete_my_doc(doc_id: str, current_user=Depends(require_client_role)):
 
 
 @page_router.post("/profile")  # изменение имени пользователя
-async def change_profile(first_name: str, last_name: str, current_user=Depends(require_client_role)):
+async def change_profile(first_name=Body(), last_name=Body(), current_user=Depends(require_client_role)):
     login = current_user.login
     if not UserService.change_profile(first_name, last_name, login):
         raise HTTPException(status_code=304, detail="Не получается изменить данные")

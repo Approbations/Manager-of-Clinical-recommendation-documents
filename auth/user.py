@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.post("/registry")
-async def register_user(login=Body(), password=Body(), role: str = "client"):
+async def register_user(login=Body(), password=Body(), role=Body("client")):
     try:
         new_user = UserService.registry(login, password, role)
         return {"message": "Пользователь успешно зарегистрирован", "user": new_user}
