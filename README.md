@@ -1,14 +1,23 @@
 # Manager-of-Clinical-recommendation-documents
 
-## Как развернуть локально
+## Как развернуть локально (всё производится на Windows)
 
 Установите зависимости:
 
    pip install -r requirements.txt
 
-Создайте папку ssh
+Установите mkcert
 
-Запустите скрипт generate-certs.py 
+        mkcert -install
+
+Создайте папку .cert (в корне проекта)
+
+        mkdir -p .cert
+
+Если mkcert уставновлено в другом месте, то поменяйте и выполните команду
+
+         & "C:\ProgramData\chocolatey\bin\mkcert.exe" -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem localhost 127.0.0.1 ::1
+
 
 Создаем базу данных "clinical_recommendations"
 
@@ -27,15 +36,4 @@
         clinical_recommendations(lst2[:100])
 
 
-Запускаем с помощью uvicorn
-
-    uvicorn main:app --host localhost --port 8002 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem
-
-## Запуск с помощью докера
-1. Убедитесь, что свободен 8002 порт.
-2. Поднимите контейнеры:
-
-        docker compose up --build
-
-   Приложение будет доступно на `https://localhost:8002`.
-3. При необходимости переопределите переменные окружения через `.env` файл.
+Запустите скрипт run.py 
