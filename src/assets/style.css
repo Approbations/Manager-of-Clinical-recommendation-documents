@@ -12,29 +12,18 @@ body,
   background-color: white;
   content-visibility: auto;
 }
-/* Навигация */
-#btnbox {
-  border-bottom: solid gray 1px;
+
+.box {
   display: flex;
   justify-content: center;
-  height: 35px;
 }
-#btnbox button {
-  border: none;
-  padding: 10px 15px;
-  background-color: white;
-  overflow: hidden;
-}
-#btnbox button:hover {
-  background-color: lightgray;
-}
-/* Лента запросов/ответов */
+
 .feed {
   list-style-type: none;
   padding: 0px;
   overflow-y: auto;
 }
-/* Ввод запроса */
+
 textarea {
   resize: none;
   box-sizing: border-box;
@@ -46,7 +35,7 @@ button > svg {
   height: inherit;
   width: inherit;
 }
-/* Поиск документа */
+
 #search {
   margin: 0px 5px;
   width: calc(100% - 40px);
@@ -64,9 +53,9 @@ button > svg {
 #srch-btn:hover {
   background-color: lightgray;
 }
-/* Список документов */
+
 #doc-feed {
-  max-height: calc(100% - 115px);
+  max-height: calc(100% - 120px);
   margin-bottom: 4px;
 }
 #doc-feed li {
@@ -85,21 +74,33 @@ button > svg {
 #open-btn:hover {
   background-color: lightgray;
 }
-/* Навигация по страницам списка документов */
+
 #pg-box {
-  display: flex;
-  justify-content: center;
   height: 25px;
 }
-/* Поля ввода данных документа */
-#addDoc input[type="text"],
+
+.su-norm,
+.su-req,
 #addDoc input[type="file"] {
   margin-bottom: 15px;
 }
-#addDoc input[type="text"] {
+.su-norm,
+.su-req {
   width: 90%;
 }
-/* Адаптация под широкие экраны */
+.su-req {
+  border-color: red;
+}
+.su-norm {
+  border-color: lightsteelblue;
+}
+
+[popover] {
+  position: fixed;
+  bottom: 0px;
+  top: auto;
+}
+
 @media screen and (min-width: 750px) {
   body {
     background-color: lightgray;

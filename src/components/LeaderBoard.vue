@@ -142,6 +142,7 @@ export default {
           this.chcrat += "Отсутствует пароль.";
         }
       }
+      document.getElementById("mypopover").showPopover();
     },
   },
 };
@@ -155,13 +156,13 @@ export default {
       </button>
     </li>
   </ul>
-  <div id="pg-box" v-if="Page">
+  <div id="pg-box" class="box" v-if="Page">
     <button type="button" @click="prev" v-if="Page > 1">Предыдущая</button>
     <p>{{ Page }}</p>
     <button type="button" @click="next" v-if="Page < maxP">Следующая</button>
   </div>
   <div v-if="chlogin && !redact">
-    <div id="prof-box">
+    <div class="prof-box">
       <p>Логин: {{ chlogin }}</p>
       <p>Имя: {{ chfname }}</p>
       <p>Фамилия: {{ chlname }}</p>
@@ -172,7 +173,7 @@ export default {
         <button type="button" @click="toredact" v-else>Добавить админа</button>
       </div>
     </div>
-    <div id="prof-box">
+    <div class="prof-box">
       <p>Роль: {{ chrole }}</p>
       <p>Дата создания: {{ chcrat }}</p>
       <p>Количество документов: {{ chdocnt }}</p>
@@ -188,6 +189,7 @@ export default {
         id="lb-fname"
         v-model="chfname"
         placeholder="Введите имя"
+        class="su-norm"
       /><br />
       <label for="lb-lname">Фамилия</label>
 
@@ -197,9 +199,12 @@ export default {
         id="lb-lname"
         v-model="chlname"
         placeholder="Введите фамилию"
+        class="su-norm"
       />
-      <button type="button" @click="change">Сохранить</button>
-      <button type="button" @click="outredact">Отмена</button>
+      <div class="cont">
+        <button type="button" @click="change">Сохранить</button>
+        <button type="button" @click="outredact">Отмена</button>
+      </div>
     </div>
     <div v-else>
       <label for="lb-login">Логин<span style="color: red">*</span></label>
@@ -220,10 +225,21 @@ export default {
         v-model="chrole"
         placeholder="Введите пароль"
       />
-
-      <button type="button" @click="addadmin">Добавить</button>
-      <button type="button" @click="outredact">Отмена</button>
-      <p>{{ chcrat }}</p>
+      <div class="cont">
+        <button type="button" @click="addadmin">Добавить</button>
+        <button type="button" @click="outredact">Отмена</button>
+      </div>
+      <div id="mypopover" popover>{{ chcrat }}</div>
     </div>
   </div>
 </template>
+<style scoped>
+.prof-box {
+  display: flex;
+  justify-content: space-between;
+}
+.cont {
+  display: flex;
+  justify-content: space-around;
+}
+</style>

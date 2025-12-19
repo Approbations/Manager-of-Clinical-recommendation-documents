@@ -29,7 +29,6 @@ export default {
   },
   methods: {
     async createdoc() {
-      //check if it sends when not filled required fields. Try adding popovers for clarity of what's happening.
       const form = document.getElementById("addDoc");
       const fD = new FormData(form);
       this.msg = "";
@@ -63,6 +62,7 @@ export default {
           this.msg = "Прикрепите файл.";
         }
       }
+      document.getElementById("mypopover").showPopover();
     },
   },
 };
@@ -78,11 +78,16 @@ export default {
     <br />
     <input type="text" name="title" id="inp-title" :class="tclass" /><br />
     <label for="inp-mcb">МКБ-10</label><br />
-    <input type="text" name="mcb" id="inp-mcb" /><br />
+    <input type="text" name="mcb" id="inp-mcb" class="su-norm" /><br />
     <label for="inp-acat">Возрастная группа</label><br />
-    <input type="text" name="age_category" id="inp-acat" /><br />
+    <input
+      type="text"
+      name="age_category"
+      id="inp-acat"
+      class="su-norm"
+    /><br />
     <label for="inp-dev">Разработчик</label><br />
-    <input type="text" name="developer" id="inp-dev" /><br />
+    <input type="text" name="developer" id="inp-dev" class="su-norm" /><br />
 
     <label v-if="role === 'admin'" for="inp-cr">Кто загрузил</label><br />
     <input
@@ -90,6 +95,7 @@ export default {
       type="text"
       name="creator"
       id="inp-cr"
+      class="su-norm"
     /><br />
 
     <label for="inp-file">Документ <span style="color: red">*</span></label>
@@ -97,5 +103,5 @@ export default {
     <input type="file" name="file" id="inp-file" accept=".pdf" /><br />
     <button type="button" @click="createdoc">Добавить</button>
   </form>
-  <p>{{ msg }}</p>
+  <div id="mypopover" popover>{{ msg }}</div>
 </template>

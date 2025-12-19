@@ -54,6 +54,7 @@ export default {
           this.msg += "Отсутствует пароль.";
         }
       }
+      document.getElementById("mypopover").showPopover();
     },
   },
 };
@@ -81,5 +82,5 @@ export default {
     placeholder="Введите пароль"
   /><br />
   <button type="button" @click="log_in">Войти</button>
-  <p>{{ msg }}</p>
+  <div id="mypopover" popover>{{ msg }}</div>
 </template>

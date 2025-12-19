@@ -143,7 +143,7 @@ export default {
       <button id="del-btn" type="button" @click="del(ind)">Удалить</button>
     </li>
   </ul>
-  <div id="pg-box" v-if="Page">
+  <div id="pg-box" class="box" v-if="Page">
     <button type="button" @click="prev" v-if="Page > 1">Предыдущая</button>
     <p>{{ Page }}</p>
     <button type="button" @click="next" v-if="Page < maxP">Следующая</button>

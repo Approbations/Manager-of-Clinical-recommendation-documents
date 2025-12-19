@@ -50,7 +50,7 @@ export default {
 
 <template>
   <div v-if="role">
-    <div id="btnbox">
+    <div id="btnbox" class="box">
       <button type="button" @click="activeComp = 'LeaderBoard'">
         Пользователи
       </button>
@@ -70,7 +70,7 @@ export default {
     ></component>
   </div>
   <div v-else>
-    <div id="btnbox">
+    <div id="btnbox" class="box">
       <button type="button" @click="activeComp = 'LeaderBoard'">
         Пользователи
       </button>
@@ -89,3 +89,22 @@ export default {
     <component v-else :is="activeComp" :du="defurl"></component>
   </div>
 </template>
+
+<style scoped>
+#btnbox {
+  border-bottom: solid gray 1px;
+  height: 35px;
+}
+#btnbox button {
+  border: none;
+  padding: 10px 15px;
+  background-color: white;
+  overflow: hidden;
+}
+#btnbox button:hover {
+  background-color: lightgray;
+}
+#app > div {
+  height: 100%;
+}
+</style>
